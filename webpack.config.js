@@ -1,5 +1,10 @@
 const webpack = require('webpack');
+const path = require('path');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+//const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+
+const isDevelopment = process.env.NODE_ENV !== 'production';
 
 module.exports = {
     entry: './src/index.js',
@@ -10,7 +15,11 @@ module.exports = {
             test: /\.(js|jsx|tsx|ts)$/,
             exclude: /node_modules/,
             use: ['babel-loader']
-          }
+          },
+          {
+            test: /\.html/,
+            use: ['html-loader']
+          },
         ]
       },
       resolve: {
@@ -31,6 +40,9 @@ module.exports = {
               files: "./src/**/*",
             },
           }),
+          new HtmlWebpackPlugin({
+            template: path.resolve(__dirname, 'public', 'index.html')
+          })
     ],
 
     devServer: {

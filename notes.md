@@ -44,3 +44,13 @@ npm install --save-dev @types/react @types/react-dom
 npm install --save-dev fork-ts-checker-webpack-plugin @types/fork-ts-checker-webpack-plugin
 
 ```
+
+## Sass
+
+```
+
+npm install node-sass sass-loader style-loader css-loader
+css-modules-typescript-loader
+@types/node-sass
+
+```
