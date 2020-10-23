@@ -5,10 +5,10 @@ import {BOTTOM_INPUT_WRAPPER_HEIGHT, TOP_NAV_HEIGHT} from './constants.styles'
 export const MessageContainer = styled.div`
     height: calc(100vh - ${BOTTOM_INPUT_WRAPPER_HEIGHT} - ${TOP_NAV_HEIGHT});
     overflow: scroll;
+    box-sizing: border-box;
 `
 
 export const MessagesWrapper = styled.div`
-
     flex: 1 1 auto;
     overflow-y: auto;
     width: 100%;
@@ -35,6 +35,7 @@ export const Message = styled.div`
 
 export const MessageDetails = styled.div`
     display: flex;
+    align-items: center;
 `
 
 export const MessageBody = styled.div`

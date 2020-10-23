@@ -21,5 +21,8 @@ type HeaderControlProps = {
 
 export const HeaderControl = styled.div<HeaderControlProps>`
     width: ${props => props.position !== 'center' ? '20%': '80%'};
-    background: ${props => props.theme === 'main' ? '' : ''}
+    background: ${props => props.theme === 'main' ? '' : ''};
+    display: flex;
+    justify-content: center;
+    align-items: center;
 `;

@@ -15,16 +15,24 @@ interface IThemeState {
     foreground: string;
     background: string;
     id: string;
-  }
+}
 
+interface IChannelState {
+    channel: string
+ }
+    
 export default function App(): JSX.Element {
     const [themeState, setTheme] = useState<IThemeState>(themes.light);
+    const [channel, setChannel] = useState<IChannelState>({channel: 'channel-1'});
     const [messages, setMessages] = useState<Message[]>([])
-    console.log("messages", messages)
 
     function toggleTheme() {
        return themeState.id === 'light' ?  
             setTheme(themes.dark) : setTheme(themes.light);
+    }
+
+    function handleChannel(channel: IChannelState): void {
+        setChannel(channel)
     }
 
     useEffect(() => {
@@ -37,8 +45,16 @@ export default function App(): JSX.Element {
             <ThemeContext.Provider value={themeState}>
                 <Header toggleTheme={toggleTheme} theme={themeState}/>
                 <MainContainer>
-                    <ChannelsBar theme={themeState}/>
+                    <ChannelsBar theme={themeState} handleChannel={handleChannel}/>
                     <MessagesContainer>
+                        <div>
+                            <p>{channel.channel}</p>
+                            <div>
+                                <span>User1</span>
+                                <span>User2</span>
+                                <span>User3</span>
+                            </div>
+                        </div>
                         <Messages messages={messages}/>
                         <InputWrapper>
                             <Input/>
