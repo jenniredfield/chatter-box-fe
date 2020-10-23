@@ -24,7 +24,7 @@ interface IChannelState {
 export default function App(): JSX.Element {
     const [themeState, setTheme] = useState<IThemeState>(themes.light);
     const [channel, setChannel] = useState<IChannelState>({channel: 'channel-1'});
-    const [messages, setMessages] = useState<Message[]>([])
+    const [messages, setMessages] = useState<Message[]>([]);
 
     function toggleTheme() {
        return themeState.id === 'light' ?  
@@ -35,8 +35,12 @@ export default function App(): JSX.Element {
         setChannel(channel)
     }
 
+    function updateMessages(message: Message) {
+        setMessages([...messages, message])
+    }
+    console.log("updateMessages -> updateMessages", updateMessages)
+
     useEffect(() => {
-        console.log('useEffect')
         setMessages(MessagesData);
     }, []);
 
