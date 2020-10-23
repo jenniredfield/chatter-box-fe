@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, {keyframes} from 'styled-components';
 
 import {BOTTOM_INPUT_WRAPPER_HEIGHT, TOP_NAV_HEIGHT} from './constants.styles'
 
@@ -14,23 +14,33 @@ export const MessagesWrapper = styled.div`
     width: 100%;
     background: white;
     box-sizing: border-box;
-    padding: 20px;
+    padding: 20px 20px 0 20px;
     display: flex;
     flex-direction: column;
     min-height: 0; /* without min-height/height:0 flex:1 doesn't work */
     height: 100%;
 
-
-    /* &::-webkit-scrollbar {
+    &::-webkit-scrollbar {
      display: none;
-  } */
+  }
+`;
+
+const appear = keyframes`
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 `;
 
 export const Message = styled.div`
     display: flex;
     flex-direction: column;
-    margin: 15px;
+    margin: 10px;
     flex-shrink: 0;
+    animation: ${appear} 600ms linear;
 `
 
 export const MessageDetails = styled.div`

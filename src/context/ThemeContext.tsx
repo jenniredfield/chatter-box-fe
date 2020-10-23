@@ -1,16 +1,5 @@
 import React from 'react';
 
-export interface ITheme {
-  foreground: string;
-  background: string;
-  id: string;
-}
-
-interface IThemes {
-  light: ITheme;
-  dark: ITheme;
-}
-
 export const themes: IThemes = {
     light: {
       foreground: '#000000',
@@ -19,7 +8,7 @@ export const themes: IThemes = {
     },
     dark: {
       foreground: '#ffffff',
-      background: '#63949c',
+      background: '#425558',
       id: 'dark'
     }
   };

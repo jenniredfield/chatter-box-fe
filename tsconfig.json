@@ -11,7 +11,7 @@
     "strict": true,
     "moduleResolution": "node",
     "baseUrl": "./src",
-    "typeRoots": ["node_modules/@types"],
+    "typeRoots": ["node_modules/@types", "/index.d.tsx"],
     "esModuleInterop": true
   },
   "include": ["src/**/*"],
