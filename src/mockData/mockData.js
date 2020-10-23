@@ -1,0 +1,17 @@
+export default [
+    {message: 'Babla', dateStamp: Date.now(), user: 'Me'},
+    {message: 'Babla12312', dateStamp: Date.now() + 60000, user: 'You'},
+    {message: 'Bablasdada asdasd g dsdg', dateStamp: Date.now() + 120000, user: 'Me'},
+    // {message: 'Babla', dateStamp: Date.now(), user: 'Me'},
+    // {message: 'Babla12312', dateStamp: Date.now() + 60000, user: 'You'},
+    // {message: 'Bablasdada asdasd g dsdg', dateStamp: Date.now() + 120000, user: 'Me'},
+    // {message: 'Babla', dateStamp: Date.now(), user: 'Me'},
+    // {message: 'Babla12312', dateStamp: Date.now() + 60000, user: 'You'},
+    // {message: 'Bablasdada asdasd g dsdg', dateStamp: Date.now() + 120000, user: 'Me'},
+    // {message: 'Babla', dateStamp: Date.now(), user: 'Me'},
+    // {message: 'Babla12312', dateStamp: Date.now() + 60000, user: 'You'},
+    // {message: 'Bablasdada asdasd g dsdg', dateStamp: Date.now() + 120000, user: 'Me'},
+    // {message: 'Babla', dateStamp: Date.now(), user: 'Me'},
+    // {message: 'Babla12312', dateStamp: Date.now() + 60000, user: 'You'},
+    // {message: 'Bablasdada asdasd g dsdg', dateStamp: Date.now() + 120000, user: 'Me'},
+]

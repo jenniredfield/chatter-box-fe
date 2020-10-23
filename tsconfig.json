@@ -7,7 +7,7 @@
     "jsx": "react",
     "outDir": "./dist",
     "rootDir": "./",
-    "isolatedModules": true,
+    "isolatedModules": false,
     "strict": true,
     "moduleResolution": "node",
     "baseUrl": "./src",

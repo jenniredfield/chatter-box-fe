@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import {ITheme} from '../context/ThemeContext';
+import {TOP_NAV_HEIGHT} from './constants.styles';
 
 type Props = {
     theme: ITheme
@@ -7,7 +8,7 @@ type Props = {
 
 export const HeaderStyle = styled.div<Props>`
     width: 100%;
-    height: 50px;
+    height: ${TOP_NAV_HEIGHT};
     box-sizing: border-box;
     display: flex;
     background: ${props => props.theme.background};

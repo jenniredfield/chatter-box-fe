@@ -1,5 +1,7 @@
 import styled from 'styled-components';
 
+import {BOTTOM_INPUT_WRAPPER_HEIGHT} from './constants.styles'
+
 export const MainContainer = styled.div`
     display: flex;
     box-sizing: border-box;
@@ -13,6 +15,6 @@ export const MessagesContainer = styled.div`
 
 export const InputWrapper = styled.div`
     display: flex;
-    height: 40px;
+    height: ${BOTTOM_INPUT_WRAPPER_HEIGHT};
     margin-top: auto;
 `
