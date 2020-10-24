@@ -3,23 +3,24 @@ import React, { useEffect } from 'react';
 
 import {MessageContainer, MessagesWrapper, Message, MessageDetails, MessageBody, MessageUser, MessageTime} from '../styles/messages.styles'
 
+type Loading = boolean;
 interface Props {
-    messages: Message[]
+    messages: Message[];
+    isLoading?: Loading;
 }
 
-const Messages: React.FC<Props> = ({messages}) => {
+const Messages: React.FC<Props> = ({messages, isLoading}) => {
     let wrapperRef: HTMLDivElement | null = null;
     let lastElement: HTMLDivElement | null = null;
 
     useEffect(() => {
-        lastElement?.scrollIntoView();
+        setTimeout(() => lastElement?.scrollIntoView(), 0);
     }, [messages, wrapperRef, lastElement])
 
     return (
         <MessageContainer>
-            <MessagesWrapper ref={e => wrapperRef = e}>
+            {!isLoading ? <MessagesWrapper ref={e => wrapperRef = e}>
                     {messages.map(({user, dateStamp, message}, index) => {
-          
                         return (
                             <Message key={index} ref={e => {
                                 if (index + 1 === messages.length) {
@@ -35,7 +36,10 @@ const Messages: React.FC<Props> = ({messages}) => {
                         );
                     })}
             
-            </MessagesWrapper>
+            </MessagesWrapper> : 
+            <div>
+                Loading...
+            </div>}
         </MessageContainer>
     );
 }

@@ -9,14 +9,20 @@ import {MainContainer, MessagesContainer, MessagesHeader, MessagesHeaderUsers, I
 import {InputStyle} from './styles/input.styles';
 import {ButtonWrapper, SendButton} from './styles/button.styles';
 
-import MessagesData from './mockData/mockData';
+import channelData from './mockData/channelData';
+
+type Loading = boolean;
 
 export default function App(): JSX.Element {
     const [themeState, setTheme] = useState<IThemeColours>(themes.light);
     const [channel, setChannel] = useState<IChannelState>({channel: 'channel-1'});
+    console.log("channel", channel)
     const [messages, setMessages] = useState<Message[]>([]);
     const [userInput, setUserInput] = useState<string>('');
     const [username, setUsername] = useState<string>('User1');
+    const [users, setUsers] = useState<User[]>([]);
+    const [isLoading, setLoading] = useState<Loading>(true)
+    console.log("isLoading", isLoading)
 
     function toggleTheme() {
        return themeState.id === 'light' ?  
@@ -56,24 +62,36 @@ export default function App(): JSX.Element {
         }
     }
 
+     const getData = async (): Promise<IChannel> => {
+        const res = await new Promise<IChannel>((resolve) => setTimeout(() => resolve(channelData as IChannel), 1000));
+
+        setMessages(res.messages);
+        setUsers(res.users);
+        setLoading(false);
+     
+        return res;
+    }
+
     useEffect(() => {
-        setMessages(MessagesData);
+        getData();
     }, []);
 
     return (
-        <div>
+        <div className="App">
             <ThemeContext.Provider value={themeState}>
                 <Header toggleTheme={toggleTheme} theme={themeState}/>
                 <MainContainer>
                     <ChannelsBar theme={themeState} handleChannel={handleChannel}/>
                     <MessagesContainer>
                         <MessagesHeader>
-                            <p>{channel.channel}</p>
-                            <div>
-                                <MessagesHeaderUsers>{username}</MessagesHeaderUsers>
-                                <MessagesHeaderUsers>User2</MessagesHeaderUsers>
-                                <MessagesHeaderUsers>User3</MessagesHeaderUsers>
-                            </div>
+                            {users.length && users.map(({username, active}) => {
+                                return (
+                                    <div key={username} style={{display: 'flex', width: '150px', alignItems: 'center'}}>
+                                        <MessagesHeaderUsers>{username}</MessagesHeaderUsers>
+                                        <span style={{background: active ? '#82dc82' : 'false', width: '10px', height: '10px', display: 'block', borderRadius: '7px'}}></span>
+                                    </div>
+                                )
+                            })}            
                         </MessagesHeader>
                         <Messages messages={messages}/>
                         <InputWrapper>

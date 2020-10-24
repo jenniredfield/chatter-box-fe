@@ -53,4 +53,13 @@ npm install node-sass sass-loader style-loader css-loader
 css-modules-typescript-loader
 @types/node-sass
 
+To use sass you need a declaration file declaring the '*.scss' module to use it. You can crete it on top folder like so:
+
+declare module '*.scss' {
+    const content: {[className: string]: string};
+    export default content;
+}
+
+Then tell the tsconfig.json to read that file in the 'include' array.
+
 ```

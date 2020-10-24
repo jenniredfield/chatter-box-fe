@@ -16,9 +16,22 @@ declare global {
         id: string;
     }
     
+    interface User {
+        username: string;
+        active: boolean;
+        lastChannel: string;
+    }
+
     interface IChannelState {
         channel: string
-     }   
+     }
+     
+     interface IChannel {
+         channelName: string;
+         messages: Message[];
+         users: User[]
+     }
 }
+
 
  export {};

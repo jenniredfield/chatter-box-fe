@@ -2,7 +2,7 @@ const webpack = require('webpack');
 const path = require('path');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-//const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
@@ -16,6 +16,14 @@ module.exports = {
             exclude: /node_modules/,
             use: ['babel-loader']
           },
+
+          {
+            test: /\.(css|scss)$/,
+            use: [isDevelopment ? 'style-loader' : {
+              loader: MiniCssExtractPlugin.loader,
+            }, 'css-loader', 'sass-loader'],
+          },
+
           {
             test: /\.html/,
             use: ['html-loader']
