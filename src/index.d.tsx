@@ -19,7 +19,6 @@ declare global {
     interface User {
         username: string;
         active: boolean;
-        lastChannel: string;
     }
 
     interface IChannelState {
@@ -30,6 +29,7 @@ declare global {
          channelName: string;
          messages: Message[];
          users: User[]
+         id: string;
      }
 }
 

@@ -1,115 +1,143 @@
-import React, {useEffect, useState} from 'react';
-import Header from './components/Header';
-import ChannelsBar from './components/ChannelsBar';
-import Messages from './components/Messages';
+import socketIOClient from "socket.io-client";
+import React, { useEffect, useState } from "react";
+import Header from "./components/Header";
+import ChannelsBar from "./components/ChannelsBar";
+import Messages from "./components/Messages";
 
-import {ThemeContext, themes} from './context/ThemeContext';
+import { ThemeContext, themes } from "./context/ThemeContext";
 
-import {MainContainer, MessagesContainer, MessagesHeader, MessagesHeaderUsers, InputWrapper} from './styles/app.styles';
-import {InputStyle} from './styles/input.styles';
-import {ButtonWrapper, SendButton} from './styles/button.styles';
+import {
+  MainContainer,
+  MessagesContainer,
+  MessagesHeader,
+  MessagesHeaderUsers,
+  MessagesHeaderStatus,
+  InputWrapper,
+} from "./styles/app.styles";
+import { InputStyle } from "./styles/input.styles";
+import { ButtonWrapper, SendButton } from "./styles/button.styles";
 
-import channelData from './mockData/channelData';
+import channelData from "./mockData/channelData";
 
 type Loading = boolean;
 
 export default function App(): JSX.Element {
-    const [themeState, setTheme] = useState<IThemeColours>(themes.light);
-    const [channel, setChannel] = useState<IChannelState>({channel: 'channel-1'});
-    console.log("channel", channel)
-    const [messages, setMessages] = useState<Message[]>([]);
-    const [userInput, setUserInput] = useState<string>('');
-    const [username, setUsername] = useState<string>('User1');
-    const [users, setUsers] = useState<User[]>([]);
-    const [isLoading, setLoading] = useState<Loading>(true)
-    console.log("isLoading", isLoading)
+  const [themeState, setTheme] = useState<IThemeColours>(themes.light);
+  const [channel, setChannel] = useState<IChannelState>({
+    channel: "channel-1",
+  });
+  console.log("channel", channel);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [userInput, setUserInput] = useState<string>("");
+  const [username, setUsername] = useState<string>("User1");
+  const [users, setUsers] = useState<User[]>([]);
+  const [isLoading, setLoading] = useState<Loading>(true);
 
-    function toggleTheme() {
-       return themeState.id === 'light' ?  
-            setTheme(themes.dark) : setTheme(themes.light);
+  function toggleTheme() {
+    return themeState.id === "light"
+      ? setTheme(themes.dark)
+      : setTheme(themes.light);
+  }
+
+  function handleChannel(channel: IChannelState): void {
+    setChannel(channel);
+  }
+
+  function updateMessages() {
+    const message: Message = {
+      user: username,
+      dateStamp: Date.now(),
+      message: userInput,
+    };
+    setMessages([...messages, message]);
+    setUserInput("");
+  }
+
+  function handleUserInput(e: React.ChangeEvent<HTMLInputElement>): void {
+    const message = e.target.value;
+    setUserInput(message);
+  }
+
+  // function handleUserName(username: string) {
+  //     setUsername(username);
+  // }
+
+  function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    const key = e.key;
+
+    if (!userInput) {
+      return;
     }
 
-    function handleChannel(channel: IChannelState): void {
-        setChannel(channel)
+    if (key === "Enter") {
+      updateMessages();
     }
+  }
 
-    function updateMessages() {
-        const message: Message = {user: username, dateStamp: Date.now(), message: userInput}
-        setMessages([...messages, message]);
-        setUserInput('');
-    }
-    console.log("updateMessages -> updateMessages", updateMessages)
+  const getData = async (): Promise<IChannel> => {
+    const res = await new Promise<IChannel>((resolve) =>
+      setTimeout(() => resolve(channelData as IChannel), 1000)
+    );
 
-    function handleUserInput(e: React.ChangeEvent<HTMLInputElement>): void {
-        const message = e.target.value;
-        setUserInput(message);
-    }
+    setMessages(res.messages);
+    setUsers(res.users);
+    setLoading(false);
+    setUsername("User 2");
 
-    function handleUserName(username: string) {
-        setUsername(username);
-    }
-    console.log("handleUserName -> handleUserName", handleUserName)
+    return res;
+  };
 
-    function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement> ) {
-        const key = e.key;
+  useEffect(() => {
+    getData();
 
-        if(!userInput) {
-            return;
-        }
+    const ENDPOINT = "localhost:3000";
 
-        if(key === 'Enter') {
-            updateMessages();
-        }
-    }
+    const socket = socketIOClient(ENDPOINT, {
+      transports: ["websocket"],
+    });
 
-     const getData = async (): Promise<IChannel> => {
-        const res = await new Promise<IChannel>((resolve) => setTimeout(() => resolve(channelData as IChannel), 1000));
+    socket.on("message", (data: any) => {
+      console.log(data);
+    });
 
-        setMessages(res.messages);
-        setUsers(res.users);
-        setLoading(false);
-     
-        return res;
-    }
+    socket.emit("hello");
 
-    useEffect(() => {
-        getData();
-    }, []);
+    // CLEAN UP THE EFFECT
+  }, []);
 
-    return (
-        <div className="App">
-            <ThemeContext.Provider value={themeState}>
-                <Header toggleTheme={toggleTheme} theme={themeState}/>
-                <MainContainer>
-                    <ChannelsBar theme={themeState} handleChannel={handleChannel}/>
-                    <MessagesContainer>
-                        <MessagesHeader>
-                            {users.length && users.map(({username, active}) => {
-                                return (
-                                    <div key={username} style={{display: 'flex', width: '150px', alignItems: 'center'}}>
-                                        <MessagesHeaderUsers>{username}</MessagesHeaderUsers>
-                                        <span style={{background: active ? '#82dc82' : 'false', width: '10px', height: '10px', display: 'block', borderRadius: '7px'}}></span>
-                                    </div>
-                                )
-                            })}            
-                        </MessagesHeader>
-                        <Messages messages={messages}/>
-                        <InputWrapper>
-                            <InputStyle 
-                                value={userInput} 
-                                onChange={e => handleUserInput(e)}
-                                onKeyDown={e => handleKeyDown(e)}
-                                placeholder="Send messages here..."
-                                />
-                            <ButtonWrapper>
-                            <SendButton  onClick={() => updateMessages()}>
-                                Send
-                            </SendButton>
-                            </ButtonWrapper>
-                        </InputWrapper>
-                    </MessagesContainer>
-                </MainContainer>
-            </ThemeContext.Provider>
-        </div>
-    )
+  return (
+    <div className="App">
+      <ThemeContext.Provider value={themeState}>
+        <Header toggleTheme={toggleTheme} theme={themeState} />
+        <MainContainer>
+          <ChannelsBar theme={themeState} handleChannel={handleChannel} />
+          <MessagesContainer>
+            <MessagesHeader>
+              {users.length &&
+                users.map(({ username, active }) => {
+                  return (
+                    <div key={`${username}_label`}>
+                      <MessagesHeaderUsers>{username}</MessagesHeaderUsers>
+                      <MessagesHeaderStatus active={active} />
+                    </div>
+                  );
+                })}
+            </MessagesHeader>
+            <Messages messages={messages} isLoading={isLoading} />
+            <InputWrapper>
+              <InputStyle
+                value={userInput}
+                onChange={(e) => handleUserInput(e)}
+                onKeyDown={(e) => handleKeyDown(e)}
+                placeholder="Send messages here..."
+              />
+              <ButtonWrapper>
+                <SendButton onClick={() => updateMessages()}>Send</SendButton>
+              </ButtonWrapper>
+            </InputWrapper>
+          </MessagesContainer>
+        </MainContainer>
+      </ThemeContext.Provider>
+    </div>
+  );
 }

@@ -10,16 +10,15 @@ interface Props {
 }
 
 const Messages: React.FC<Props> = ({messages, isLoading}) => {
-    let wrapperRef: HTMLDivElement | null = null;
     let lastElement: HTMLDivElement | null = null;
 
     useEffect(() => {
-        setTimeout(() => lastElement?.scrollIntoView(), 0);
-    }, [messages, wrapperRef, lastElement])
+        lastElement?.scrollIntoView();
+    }, [isLoading, lastElement, messages])
 
     return (
         <MessageContainer>
-            {!isLoading ? <MessagesWrapper ref={e => wrapperRef = e}>
+            {!isLoading ? <MessagesWrapper>
                     {messages.map(({user, dateStamp, message}, index) => {
                         return (
                             <Message key={index} ref={e => {

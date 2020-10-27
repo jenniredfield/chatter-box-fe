@@ -1,3 +1,4 @@
+require("regenerator-runtime/runtime");
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {GlobalStyles} from './styles/global.styles'
