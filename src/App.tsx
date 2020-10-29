@@ -21,6 +21,12 @@ import channelData from "./mockData/channelData";
 
 type Loading = boolean;
 
+const ENDPOINT = "localhost:3000";
+
+const socket = socketIOClient(ENDPOINT, {
+  transports: ["websocket"],
+});
+
 export default function App(): JSX.Element {
   const [themeState, setTheme] = useState<IThemeColours>(themes.light);
   const [channel, setChannel] = useState<IChannelState>({
@@ -31,7 +37,7 @@ export default function App(): JSX.Element {
   const [userInput, setUserInput] = useState<string>("");
   const [username, setUsername] = useState<string>("User1");
   const [users, setUsers] = useState<User[]>([]);
-  const [isLoading, setLoading] = useState<Loading>(true);
+  const [isLoading, setLoading] = useState<Loading>(false);
 
   function toggleTheme() {
     return themeState.id === "light"
@@ -43,14 +49,19 @@ export default function App(): JSX.Element {
     setChannel(channel);
   }
 
-  function updateMessages() {
+  function updateMessages(message: Message) {
+    setMessages([...messages, message]);
+    setUserInput('');
+  }
+
+  function sendMessage() {
     const message: Message = {
       user: username,
       dateStamp: Date.now(),
       message: userInput,
     };
-    setMessages([...messages, message]);
-    setUserInput("");
+
+    socket.emit('message', message);
   }
 
   function handleUserInput(e: React.ChangeEvent<HTMLInputElement>): void {
@@ -70,7 +81,7 @@ export default function App(): JSX.Element {
     }
 
     if (key === "Enter") {
-      updateMessages();
+      sendMessage();
     }
   }
 
@@ -89,21 +100,15 @@ export default function App(): JSX.Element {
 
   useEffect(() => {
     getData();
-
-    const ENDPOINT = "localhost:3000";
-
-    const socket = socketIOClient(ENDPOINT, {
-      transports: ["websocket"],
-    });
-
-    socket.on("message", (data: any) => {
-      console.log(data);
-    });
-
-    socket.emit("hello");
-
-    // CLEAN UP THE EFFECT
   }, []);
+
+  useEffect(() => {
+    socket.on('messages', updateMessages);
+
+    return () => {
+      socket.off('messages', updateMessages);
+    }
+  });
 
   return (
     <div className="App">
@@ -132,7 +137,7 @@ export default function App(): JSX.Element {
                 placeholder="Send messages here..."
               />
               <ButtonWrapper>
-                <SendButton onClick={() => updateMessages()}>Send</SendButton>
+                <SendButton onClick={() => sendMessage()}>Send</SendButton>
               </ButtonWrapper>
             </InputWrapper>
           </MessagesContainer>
