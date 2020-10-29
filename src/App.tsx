@@ -31,6 +31,7 @@ export default function App(): JSX.Element {
   const [themeState, setTheme] = useState<IThemeColours>(themes.light);
   const [channel, setChannel] = useState<IChannelState>({
     channel: "channel-1",
+    channelId: "5f972ece34ec5c07f9c77a91"
   });
   console.log("channel", channel);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -38,6 +39,7 @@ export default function App(): JSX.Element {
   const [username, setUsername] = useState<string>("User1");
   const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setLoading] = useState<Loading>(false);
+
 
   function toggleTheme() {
     return themeState.id === "light"
@@ -54,6 +56,7 @@ export default function App(): JSX.Element {
       user: username,
       dateStamp: Date.now(),
       message: userInput,
+      channelId: channel.channelId
     };
 
     socket.emit('message', message);
@@ -121,10 +124,10 @@ export default function App(): JSX.Element {
               {users.length &&
                 users.map(({ username, active }) => {
                   return (
-                    <div key={`${username}_label`}>
-                      <MessagesHeaderUsers>{username}</MessagesHeaderUsers>
-                      <MessagesHeaderStatus active={active} />
-                    </div>
+                    <>
+                      <MessagesHeaderUsers key={`${username}_label`}>{username}</MessagesHeaderUsers>
+                      <MessagesHeaderStatus active={active} key={`${username}_status`}/>
+                    </>
                   );
                 })}
             </MessagesHeader>

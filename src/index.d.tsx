@@ -3,6 +3,7 @@ declare global {
         message: string;
         dateStamp: number;
         user: string;
+        channelId: string;
     }
 
     interface IThemes {
@@ -22,7 +23,8 @@ declare global {
     }
 
     interface IChannelState {
-        channel: string
+        channel: string,
+        channelId: string;
      }
      
      interface IChannel {
