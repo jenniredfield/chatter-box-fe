@@ -49,11 +49,6 @@ export default function App(): JSX.Element {
     setChannel(channel);
   }
 
-  function updateMessages(message: Message) {
-    setMessages([...messages, message]);
-    setUserInput('');
-  }
-
   function sendMessage() {
     const message: Message = {
       user: username,
@@ -103,12 +98,17 @@ export default function App(): JSX.Element {
   }, []);
 
   useEffect(() => {
-    socket.on('messages', updateMessages);
+    function updateMessages(message: Message) {
+      setMessages([...messages, message]);
+      setUserInput('');
+    }
+    
+    socket.on("messages", updateMessages);
 
     return () => {
-      socket.off('messages', updateMessages);
+      socket.off("messages", updateMessages)
     }
-  });
+  }, [messages]);
 
   return (
     <div className="App">
