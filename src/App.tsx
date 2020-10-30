@@ -83,22 +83,20 @@ export default function App(): JSX.Element {
     }
   }
 
-  const getData = async (): Promise<IChannel> => {
-    const res = await new Promise<IChannel>((resolve) =>
-      setTimeout(() => resolve(channelData as IChannel), 1000)
-    );
-
-    setMessages(res.messages);
-    setUsers(res.users);
-    setLoading(false);
-    setUsername("User 2");
-
-    return res;
-  };
-
   useEffect(() => {
+    const getData = async (): Promise<void> => {
+      const res = await fetch(`http://localhost:3000/channel/${channel.channelId}`);
+      const json = await res.json();
+      const {messages, users} = json[0];
+  
+      setMessages(messages);
+      setUsers(users);
+      setLoading(false);
+      setUsername("User 1");
+    }
+
     getData();
-  }, []);
+  }, [channel.channelId]);
 
   useEffect(() => {
     function updateMessages(message: Message) {
