@@ -8,10 +8,7 @@ import { ThemeContext, themes } from "./context/ThemeContext";
 
 import {
   MainContainer,
-  MessagesContainer,
-  MessagesHeader,
-  MessagesHeaderUsers,
-  MessagesHeaderStatus
+  MessagesContainer
 } from "./styles/app.styles";
 import {SERVER_BASE_URL} from './config';
 
@@ -19,7 +16,6 @@ interface IAppState {
   allChannels: IChannelState[],
   channel: IChannelState,
   username: string,
-  users: User[],
   isLoading: boolean
 }
 
@@ -30,7 +26,6 @@ export default function App(): JSX.Element {
     allChannels: [],
     channel: {channelName: '', channelId: ''},
     username: 'User2',
-    users: [],
     isLoading: true
   });
 
@@ -55,9 +50,7 @@ export default function App(): JSX.Element {
 
     getAllChannels();
 
-  }, [])
-
-  console.log('render')
+  }, []);
 
   return (
     <div className="App">
@@ -66,17 +59,6 @@ export default function App(): JSX.Element {
         <MainContainer>
           <ChannelsBar theme={themeState} handleChannel={handleChannel} allChannels={state.allChannels}/>
           <MessagesContainer>
-            <MessagesHeader>
-              {state.users.length &&
-                state.users.map(({ username, active }) => {
-                  return (
-                    <>
-                      <MessagesHeaderUsers key={`${username}_label`}>{username}</MessagesHeaderUsers>
-                      <MessagesHeaderStatus active={active} key={`${username}_status`}/>
-                    </>
-                  );
-                })}
-            </MessagesHeader>
             <Messages channelId={state.channel.channelId}/>
             <Input username={state.username} channelId={state.channel.channelId}/>
           </MessagesContainer>

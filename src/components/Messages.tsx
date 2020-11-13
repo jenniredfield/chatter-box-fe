@@ -3,6 +3,8 @@ import moment from 'moment';
 
 import {socket, SERVER_BASE_URL} from '../config';
 
+import MessagesHeader from './MessagesHeader';
+
 import {MessageContainer, MessagesWrapper, Message, MessageDetails, MessageBody, MessageUser, MessageTime} from '../styles/messages.styles'
 
 type Loading = boolean;
@@ -52,6 +54,7 @@ const Messages: React.FC<Props> = ({channelId}) => {
         <MessageContainer>
             {!isLoading ? 
             <MessagesWrapper>
+                    <MessagesHeader users={users} />
                     {messages.map(({user, dateStamp, message}, index) => {
                         return (
                             <Message key={index} ref={e => {
