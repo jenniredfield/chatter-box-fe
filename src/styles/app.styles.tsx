@@ -27,13 +27,6 @@ export const MessagesHeaderUsers = styled.span`
     margin: 0 10px;
 `
 
-export const InputWrapper = styled.div`
-    display: flex;
-    height: ${BOTTOM_INPUT_WRAPPER_HEIGHT};
-    margin-top: auto;
-    border-top: 1px solid #eaeaea;
-`;
-
 interface StatusProps {
     active: boolean;
 }

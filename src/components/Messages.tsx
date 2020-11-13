@@ -1,16 +1,48 @@
+import React, { useEffect, useState } from 'react';
 import moment from 'moment';
-import React, { useEffect } from 'react';
+
+import {socket, SERVER_BASE_URL} from '../config';
 
 import {MessageContainer, MessagesWrapper, Message, MessageDetails, MessageBody, MessageUser, MessageTime} from '../styles/messages.styles'
 
 type Loading = boolean;
 interface Props {
-    messages: Message[];
-    isLoading?: Loading;
+    channelId: IChannelState['channelId']
 }
 
-const Messages: React.FC<Props> = ({messages, isLoading}) => {
+const Messages: React.FC<Props> = ({channelId}) => {
     let lastElement: HTMLDivElement | null = null;
+    const [messages, setMessages] = useState<Message[]>([]);
+    const [isLoading, setLoading] = useState<Loading>(true);
+    const [users, setUsers] = useState<User[]>([])
+
+    useEffect(() => {
+        const getData = async (channelId: string): Promise<void> => {
+            setLoading(true);
+            const res = await fetch(`${SERVER_BASE_URL}/channel/${channelId}`);
+            const json = await res.json();
+            const {messages, users} = json[0];
+
+            setMessages(messages);
+            setUsers(users)
+            setLoading(false);
+        }
+
+        getData(channelId);
+    
+  }, [channelId]);
+
+    useEffect(() => {
+        function updateMessages(message: Message) {
+          setMessages(messages => [...messages, message])
+        }
+
+        socket.on("messages", updateMessages);
+    
+        return () => {
+          socket.off("messages", updateMessages)
+        }
+      }, [messages]);
 
     useEffect(() => {
         lastElement?.scrollIntoView();
@@ -18,7 +50,8 @@ const Messages: React.FC<Props> = ({messages, isLoading}) => {
 
     return (
         <MessageContainer>
-            {!isLoading ? <MessagesWrapper>
+            {!isLoading ? 
+            <MessagesWrapper>
                     {messages.map(({user, dateStamp, message}, index) => {
                         return (
                             <Message key={index} ref={e => {
@@ -34,7 +67,6 @@ const Messages: React.FC<Props> = ({messages, isLoading}) => {
                             </Message>
                         );
                     })}
-            
             </MessagesWrapper> : 
             <div>
                 Loading...

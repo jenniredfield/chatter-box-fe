@@ -1,8 +1,8 @@
-import socketIOClient from "socket.io-client";
 import React, { useEffect, useState } from "react";
 import Header from "./components/Header";
 import ChannelsBar from "./components/ChannelsBar";
 import Messages from "./components/Messages";
+import Input from  "./components/Input";
 
 import { ThemeContext, themes } from "./context/ThemeContext";
 
@@ -11,35 +11,28 @@ import {
   MessagesContainer,
   MessagesHeader,
   MessagesHeaderUsers,
-  MessagesHeaderStatus,
-  InputWrapper,
+  MessagesHeaderStatus
 } from "./styles/app.styles";
-import { InputStyle } from "./styles/input.styles";
-import { ButtonWrapper, SendButton } from "./styles/button.styles";
+import {SERVER_BASE_URL} from './config';
 
-import channelData from "./mockData/channelData";
-
-type Loading = boolean;
-
-const ENDPOINT = "localhost:3000";
-
-const socket = socketIOClient(ENDPOINT, {
-  transports: ["websocket"],
-});
+interface IAppState {
+  allChannels: IChannelState[],
+  channel: IChannelState,
+  username: string,
+  users: User[],
+  isLoading: boolean
+}
 
 export default function App(): JSX.Element {
   const [themeState, setTheme] = useState<IThemeColours>(themes.light);
-  const [channel, setChannel] = useState<IChannelState>({
-    channel: "channel-1",
-    channelId: "5f972ece34ec5c07f9c77a91"
-  });
-  console.log("channel", channel);
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [userInput, setUserInput] = useState<string>("");
-  const [username, setUsername] = useState<string>("User1");
-  const [users, setUsers] = useState<User[]>([]);
-  const [isLoading, setLoading] = useState<Loading>(false);
 
+  const [state, setAppState] = useState<IAppState>({
+    allChannels: [],
+    channel: {channelName: '', channelId: ''},
+    username: 'User2',
+    users: [],
+    isLoading: true
+  });
 
   function toggleTheme() {
     return themeState.id === "light"
@@ -48,79 +41,34 @@ export default function App(): JSX.Element {
   }
 
   function handleChannel(channel: IChannelState): void {
-    setChannel(channel);
-  }
-
-  function sendMessage() {
-    const message: Message = {
-      user: username,
-      dateStamp: Date.now(),
-      message: userInput,
-      channelId: channel.channelId
-    };
-
-    socket.emit('message', message);
-  }
-
-  function handleUserInput(e: React.ChangeEvent<HTMLInputElement>): void {
-    const message = e.target.value;
-    setUserInput(message);
-  }
-
-  // function handleUserName(username: string) {
-  //     setUsername(username);
-  // }
-
-  function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
-    const key = e.key;
-
-    if (!userInput) {
-      return;
-    }
-
-    if (key === "Enter") {
-      sendMessage();
-    }
+    setAppState(state => ({...state, channel}));
   }
 
   useEffect(() => {
-    const getData = async (): Promise<void> => {
-      const res = await fetch(`http://localhost:3000/channel/${channel.channelId}`);
+    const getAllChannels = async () => {
+      const res = await fetch(`${SERVER_BASE_URL}/allChannels`);
       const json = await res.json();
-      const {messages, users} = json[0];
-  
-      setMessages(messages);
-      setUsers(users);
-      setLoading(false);
-      setUsername("User 1");
+      const firstChannel = json && json[0] as IChannelState;
+      
+      setAppState(state => ({...state, allChannels: json, channel: firstChannel}));
     }
 
-    getData();
-  }, [channel.channelId]);
+    getAllChannels();
 
-  useEffect(() => {
-    function updateMessages(message: Message) {
-      setMessages([...messages, message]);
-      setUserInput('');
-    }
-    
-    socket.on("messages", updateMessages);
+  }, [])
 
-    return () => {
-      socket.off("messages", updateMessages)
-    }
-  }, [messages]);
+  console.log('render')
 
   return (
     <div className="App">
       <ThemeContext.Provider value={themeState}>
-        <Header toggleTheme={toggleTheme} theme={themeState} />
+        <Header toggleTheme={toggleTheme} theme={themeState} username={state.username} />
         <MainContainer>
-          <ChannelsBar theme={themeState} handleChannel={handleChannel} />
+          <ChannelsBar theme={themeState} handleChannel={handleChannel} allChannels={state.allChannels}/>
           <MessagesContainer>
             <MessagesHeader>
-              {users.length &&
-                users.map(({ username, active }) => {
+              {state.users.length &&
+                state.users.map(({ username, active }) => {
                   return (
                     <>
                       <MessagesHeaderUsers key={`${username}_label`}>{username}</MessagesHeaderUsers>
@@ -129,18 +77,8 @@ export default function App(): JSX.Element {
                   );
                 })}
             </MessagesHeader>
-            <Messages messages={messages} isLoading={isLoading} />
-            <InputWrapper>
-              <InputStyle
-                value={userInput}
-                onChange={(e) => handleUserInput(e)}
-                onKeyDown={(e) => handleKeyDown(e)}
-                placeholder="Send messages here..."
-              />
-              <ButtonWrapper>
-                <SendButton onClick={() => sendMessage()}>Send</SendButton>
-              </ButtonWrapper>
-            </InputWrapper>
+            <Messages channelId={state.channel.channelId}/>
+            <Input username={state.username} channelId={state.channel.channelId}/>
           </MessagesContainer>
         </MainContainer>
       </ThemeContext.Provider>

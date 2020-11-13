@@ -3,10 +3,11 @@ import {HeaderStyle, HeaderControl} from '../styles/header.styles';
 
 interface HeaderProps {
     toggleTheme: () => void;
-    theme: IThemeColours
+    theme: IThemeColours;
+    username: string;
 }
 
- const Header: React.FC<HeaderProps> = ({toggleTheme, theme}) => {
+ const Header: React.FC<HeaderProps> = ({toggleTheme, theme, username}) => {
     return (
         <HeaderStyle theme={theme}>
             <HeaderControl position="left">ChatterBox</HeaderControl>
@@ -17,6 +18,7 @@ interface HeaderProps {
 
             <HeaderControl position="right">
                  <button onClick={toggleTheme}>Change</button>
+                 <p>{username}</p>
             </HeaderControl>
         </HeaderStyle>
 

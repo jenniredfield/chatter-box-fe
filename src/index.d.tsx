@@ -23,7 +23,7 @@ declare global {
     }
 
     interface IChannelState {
-        channel: string,
+        channelName: string,
         channelId: string;
      }
      

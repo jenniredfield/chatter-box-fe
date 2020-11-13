@@ -3,15 +3,18 @@ import {ChannelsBarWrapper, ChannelsList} from '../styles/channelsbar.styles';
 
 type Props = {
     theme: IThemeColours;
-    handleChannel: (channel: IChannelState) => void
+    handleChannel: (channel: IChannelState) => void;
+    allChannels: IChannelState[]
 }
 
-const ChannelsBar: React.FC<Props> = ({theme, handleChannel}) => {
+const ChannelsBar: React.FC<Props> = ({theme, handleChannel, allChannels}) => {
     return (
         <ChannelsBarWrapper theme={theme}>
             <ChannelsList>
-                <li onClick={() => 
-                    handleChannel({channel: 'channel-1', channelId: '5f972ece34ec5c07f9c77a91'})}>Channel 1</li>
+                {allChannels.map(channel => 
+                    <li 
+                        key={channel.channelName} 
+                        onClick={() => handleChannel(channel)}>{channel.channelName}</li>)}
             </ChannelsList>
         </ChannelsBarWrapper>
     )
