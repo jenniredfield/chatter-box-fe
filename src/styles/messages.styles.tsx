@@ -6,6 +6,7 @@ export const MessageContainer = styled.div`
     height: calc(100vh - ${BOTTOM_INPUT_WRAPPER_HEIGHT} - ${TOP_NAV_HEIGHT});
     overflow: scroll;
     box-sizing: border-box;
+    position: relative;
 `
 
 export const MessagesHeaderWrapper = styled.div`
@@ -15,6 +16,12 @@ export const MessagesHeaderWrapper = styled.div`
     box-shadow: 0px 2px 3px #d8d8d8;
     padding: 10px 25px;
     font-weight: bold;
+    height: 30px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: white;
+    width: 100%;
 `
 
 export const MessagesHeaderUsers = styled.span`

@@ -1,8 +1,9 @@
 import React, { useState } from "react";
+import {UsernameModalStyle} from '../styles/usernameModal.styles';
 
 interface Props {
   username: string;
-  channel: IChannelState;
+  channel?: IChannelState;
   setUsername: (username: string) => void;
 }
 
@@ -28,7 +29,7 @@ const UsernameModal: React.FC<Props> = ({ setUsername, channel }) => {
   }
 
   return (
-    <div className="username-modal">
+    <UsernameModalStyle>
       <div>
         <label>Enter username</label>
         <div>
@@ -38,10 +39,10 @@ const UsernameModal: React.FC<Props> = ({ setUsername, channel }) => {
             onChange={handleChange}
             onKeyDown={handleKeyDown}
           />
-          <button>Send</button>
+          <button onClick={() => setUsername(value)}>Send</button>
         </div>
       </div>
-    </div>
+    </UsernameModalStyle>
   );
 };
 

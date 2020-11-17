@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from "react";
-import Header from "./components/Header";
-import ChannelsBar from "./components/ChannelsBar";
-import Messages from "./components/Messages";
-import Input from "./components/Input";
+import React, { useEffect, useState } from 'react';
+import Header from './components/Header';
+import ChannelsBar from './components/ChannelsBar';
+import Messages from './components/Messages';
+import Input from './components/Input';
+import UsernameModal from './components/UsernameModal';
+import { ThemeContext, themes } from './context/ThemeContext';
 
-import { ThemeContext, themes } from "./context/ThemeContext";
-
-import { MainContainer, MessagesContainer } from "./styles/app.styles";
-import { SERVER_BASE_URL } from "./config";
+import { MainContainer, MessagesContainer } from './styles/app.styles';
+import { SERVER_BASE_URL, socket } from './config';
 
 interface IAppState {
   allChannels: IChannelState[];
@@ -21,13 +21,13 @@ export default function App(): JSX.Element {
 
   const [state, setAppState] = useState<IAppState>({
     allChannels: [],
-    channel: { channelName: "", channelId: "" },
-    username: "User2",
+    channel: { channelName: '', channelId: '' },
+    username: 'Jen1234',
     isLoading: true,
   });
-
+  console.log('state', state);
   function toggleTheme() {
-    return themeState.id === "light"
+    return themeState.id === 'light'
       ? setTheme(themes.dark)
       : setTheme(themes.light);
   }
@@ -52,12 +52,37 @@ export default function App(): JSX.Element {
     getAllChannels();
 
     // disconnect socket
-    return () => {};
+    return () => {
+      socket.disconnect();
+    };
   }, []);
+
+  const setUsername = async (username: string) => {
+    setAppState({ ...state, username });
+    console.log('channelId', state.channel.channelId);
+
+    await fetch(`${SERVER_BASE_URL}/setUser`, {
+      method: 'POST',
+      body: JSON.stringify({
+        username: username,
+        channelId: state.channel.channelId,
+      }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+  };
 
   return (
     <div className="App">
       <ThemeContext.Provider value={themeState}>
+        {!state.username && (
+          <UsernameModal
+            username={state.username}
+            setUsername={setUsername}
+            channel={state.channel}
+          />
+        )}
         <Header
           toggleTheme={toggleTheme}
           theme={themeState}

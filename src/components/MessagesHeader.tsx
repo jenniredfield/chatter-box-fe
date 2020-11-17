@@ -13,15 +13,15 @@ const MessagesHeader: React.FC<Props> = ({ users }) => {
   return (
     <MessagesHeaderWrapper>
       {users.length &&
-        users.map(({ username, active }) => {
+        users.map(({ username, active }, i) => {
           return (
             <>
-              <MessagesHeaderUsers key={`${username}_label`}>
+              <MessagesHeaderUsers key={`${username}_label_${i}`}>
                 {username}
               </MessagesHeaderUsers>
               <MessagesHeaderStatus
                 active={active}
-                key={`${username}_status`}
+                key={`${username}_status_${i}`}
               />
             </>
           );

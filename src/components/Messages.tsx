@@ -30,7 +30,9 @@ const Messages: React.FC<Props> = ({channelId}) => {
             setLoading(false);
         }
 
-        getData(channelId);
+        if (channelId) {
+            getData(channelId);
+        }
     
   }, [channelId]);
 
@@ -52,12 +54,12 @@ const Messages: React.FC<Props> = ({channelId}) => {
 
     return (
         <MessageContainer>
+            <MessagesHeader users={users} />
             {!isLoading ? 
             <MessagesWrapper>
-                    <MessagesHeader users={users} />
                     {messages.map(({user, dateStamp, message}, index) => {
                         return (
-                            <Message key={index} ref={e => {
+                            <Message key={`message_${user}_${index}`} ref={e => {
                                 if (index + 1 === messages.length) {
                                     lastElement = e;
                                 }
